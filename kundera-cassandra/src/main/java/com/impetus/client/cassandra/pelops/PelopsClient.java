@@ -42,9 +42,11 @@ import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.RowDeletor;
 import org.scale7.cassandra.pelops.Selector;
 
+import com.impetus.kundera.client.BaseClient;
 import com.impetus.kundera.client.Client;
 import com.impetus.kundera.client.EnhanceEntity;
 import com.impetus.kundera.db.DataRow;
+import com.impetus.kundera.db.RelationHolder;
 import com.impetus.kundera.index.IndexManager;
 import com.impetus.kundera.metadata.KunderaMetadataManager;
 import com.impetus.kundera.metadata.model.EntityMetadata;
@@ -62,7 +64,7 @@ import com.impetus.kundera.proxy.EnhancedEntity;
  * @author animesh.kumar
  * @since 0.1
  */
-public class PelopsClient implements Client
+public class PelopsClient extends BaseClient implements Client
 {
 
     /** log for this class. */
@@ -74,14 +76,6 @@ public class PelopsClient implements Client
     /** The data handler. */
     private PelopsDataHandler dataHandler;
 
-    /** The index manager. */
-    private IndexManager indexManager;
-
-    /** The reader. */
-    private EntityReader reader;
-
-    /** The persistence unit. */
-    private String persistenceUnit;
 
     /** The timestamp. */
     private long timestamp;
@@ -94,21 +88,9 @@ public class PelopsClient implements Client
      */
     public PelopsClient(IndexManager indexManager, EntityReader reader)
     {
-        this.indexManager = indexManager;
+        setIndexManager(indexManager);
         this.dataHandler = new PelopsDataHandler(this);
-        this.reader = reader;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.impetus.kundera.client.Client#persist(com.impetus.kundera.proxy.
-     * EnhancedEntity)
-     */
-    @Override
-    public void persist(EnhancedEntity enhancedEntity) throws Exception
-    {
-        // DELETE it.
+        setReader(reader);
     }
 
     /*
@@ -270,27 +252,7 @@ public class PelopsClient implements Client
         getIndexManager().remove(metadata, entity, pKey.toString());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.impetus.kundera.client.Client#getIndexManager()
-     */
-    @Override
-    public final IndexManager getIndexManager()
-    {
-        return indexManager;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.impetus.kundera.client.Client#getPersistenceUnit()
-     */
-    @Override
-    public String getPersistenceUnit()
-    {
-        return persistenceUnit;
-    }
+   
 
     /**
      * Checks if is open.
@@ -310,23 +272,12 @@ public class PelopsClient implements Client
     @Override
     public final void close()
     {
-        this.indexManager.flush();
+        getIndexManager().flush();
         this.dataHandler = null;
         closed = true;
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.impetus.kundera.client.Client#setPersistenceUnit(java.lang.String)
-     */
-    @Override
-    public void setPersistenceUnit(String persistenceUnit)
-    {
-        this.persistenceUnit = persistenceUnit;
-    }
 
     /*
      * (non-Javadoc)
@@ -671,30 +622,7 @@ public class PelopsClient implements Client
         return (List<EnhanceEntity>) find(conditions, m, true, relationNames);
     }
 
-    /**
-     * On index.
-     * 
-     * @param childEntity
-     *            the child entity
-     * @param entitySaveGraph
-     *            the entity save graph
-     * @param metadata
-     *            the metadata
-     * @param rlValue
-     *            the rl value
-     */
-    private void onIndex(Object childEntity, EntitySaveGraph entitySaveGraph, EntityMetadata metadata, String rlValue)
-    {
-        if (!entitySaveGraph.isSharedPrimaryKey())
-        {
-            getIndexManager().write(metadata, childEntity, rlValue, entitySaveGraph.getParentEntity().getClass());
-        }
-        else
-        {
-            getIndexManager().write(metadata, childEntity);
-        }
-    }
-
+  
     /**
      * Adds the relation.
      *
@@ -817,15 +745,11 @@ public class PelopsClient implements Client
         tf = null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.impetus.kundera.client.Client#getReader()
-     */
+   
+
     @Override
-    public EntityReader getReader()
-    {
-        return reader;
+    protected void onPersist(EntityMetadata entityMetadata, Object entity, String id, List<RelationHolder> addRelation) throws Exception, PropertyAccessException {
+        
     }
 
 }

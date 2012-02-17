@@ -36,7 +36,9 @@ public enum ClientType
  /** The THRIFT. */
  THRIFT, 
  /** The RDBMS. */
- RDBMS;
+ RDBMS,
+ /** The Oracle KVStore. */
+ KVSTORE;
     
     /** The coll. */
     static Map<String, ClientType> coll = new HashMap<String, ClientType>();
@@ -51,6 +53,7 @@ public enum ClientType
         coll.put(THRIFT.name(), THRIFT);
         coll.put(MONGODB.name(), MONGODB);
         coll.put(RDBMS.name(), RDBMS);
+        coll.put(KVSTORE.name(), KVSTORE);
     }
 
     /**

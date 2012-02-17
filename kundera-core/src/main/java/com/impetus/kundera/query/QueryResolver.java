@@ -195,6 +195,10 @@ public class QueryResolver
             clazz = Class.forName("com.impetus.client.rdbms.query.RDBMSQuery");
 
             break;
+        case KVSTORE:
+            clazz = Class.forName("com.impetus.kundera.query.LuceneQuery");
+
+            break;
 
         default:
             throw new ClassNotFoundException("Invalid Client type" + clientType);

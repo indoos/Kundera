@@ -93,6 +93,11 @@ public final class ClientResolver
                 loader = (GenericClientFactory) Class.forName("com.impetus.client.rdbms.RDBMSClientFactory")
                         .newInstance();
             }
+            else if (clientType.equals(ClientType.KVSTORE))
+            {
+                loader = (GenericClientFactory) Class.forName("com.impetus.client.oraclenosqldb.OracleNoSQLDBClientFactory")
+                        .newInstance();
+            }
         }
         catch (InstantiationException e)
         {
