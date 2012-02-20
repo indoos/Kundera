@@ -25,7 +25,7 @@
 			<groupId>oracle.kv</groupId>
 			<artifactId>kvclient</artifactId>
 			<version>1.2.123</version>
-			<scope>runtime</scope>
+			<!--<scope>runtime</scope>-->
 			<!-- <scope>system</scope> <systemPath>${basedir}\lib\kvclient-1.2.123.jar</systemPath> -->
 		</dependency>
 		<dependency>
